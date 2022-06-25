@@ -216,4 +216,10 @@ export const prismDarkTheme = css`
     color: ${theme.colors.gray[100]};
     border: 1px solid ${theme.colors.gray[700]};
   }
+  h1 {
+    color: ${theme.colors.gray[800]};
+  }
+  h2 {
+    color: ${theme.colors.gray[800]};
+  }
 `

@@ -8,14 +8,6 @@ const GlobalStyle = ({ children }) => {
       <Global
         styles={css`
           ${prismDarkTheme};
-          ::selection {
-            background-color: #26282B;
-            color: #26282B;
-          }
-          ::-moz-selection {
-            background: #ffb7b7;
-            color: #3B4252;
-          }
           html {
             min-width: 356px;
           }
