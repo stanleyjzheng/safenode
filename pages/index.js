@@ -7,17 +7,22 @@ import {
   createIcon,
   SlideFade
 } from '@chakra-ui/react';
-import Container from '../components/Container'
+import NavbarContainer from '../components/NavbarContainer'
 
 export default function Homepage() {
   return (
     <>
-      <Container maxW={'3xl'}>
+      <NavbarContainer maxW={'3xl'} position='relative'>
         <Stack
           as={Box}
           textAlign={'center'}
           spacing={{ base: 8, md: 14 }}
-          py={{ base: 20, md: 36 }}>
+          py={{ base: 20, md: 36 }}
+          position='absolute'
+          top='50%'
+          left='50%'
+          transform='translate(-50%, -50%)'
+        >
           <SlideFade
             direction="top"
             in={true}
@@ -70,7 +75,7 @@ export default function Homepage() {
             </Button>
           </Stack>
         </Stack>
-      </Container>
+      </NavbarContainer>
     </>
   );
 }

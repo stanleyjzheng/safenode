@@ -127,7 +127,7 @@ export default function Navbar({ enableTransition }) {
               </Button>
             </InputRightElement>
           </InputGroup>
-          <button onClick={()=> location.assign('?wd=' + value)}>Search</button>
+          <button onClick={()=> location.assign('?wd=' + value)}></button>
           {isLargerThan768 ? (
             <Box color="textPrimary">
               <NextLink href="/about" passHref>

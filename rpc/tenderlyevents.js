@@ -54,11 +54,17 @@ async function processTxs(txs) {
                             'to': event['inputs'][1]['value'],
                             'tokenId': event['inputs'][2]['value'],
                         }
-                        outputTransactions.push(tx)
+
+                        for (const contract of body['contracts']) {
+                            if (contract['address'] == tx.contract_address) {
+                                tx['token_name'] = contract['token_data']['name']
+                                tx['token_symbol'] = contract['token_data']['symbol']
+                            }
+                            outputTransactions.push(tx)
+                        }
                     }
+                    console.log(outputTransactions)
                 }
-                
-                console.log(outputTransactions)
             }
             else {
                 console.log(error)

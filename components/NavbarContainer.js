@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Flex, Stack, Box } from '@chakra-ui/react'
 import Navbar from './Navbar'
 
-const Container = ({ enableTransition, children }) => {
+const NavbarContainer = ({ enableTransition, children }) => {
   return (
     <>
       <Navbar enableTransition={enableTransition} />
@@ -13,4 +13,4 @@ const Container = ({ enableTransition, children }) => {
   )
 }
 
-export default Container
+export default NavbarContainer
