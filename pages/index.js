@@ -58,11 +58,11 @@ export default function Homepage() {
             alignSelf={'center'}
             position={'relative'}>
             <Button
-              bg={'button3'}
+              bg={'button4'}
               rounded={'full'}
               px={6}
               _hover={{
-                bg: 'buttonHover',
+                bg: 'button2',
               }}
               textColor="textPrimary"
             >

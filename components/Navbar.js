@@ -14,16 +14,21 @@ import {
   DrawerBody,
   Stack,
   Icon,
-  Image
+  Input,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 // import useMediaQuery from "../hook/useMediaQuery";
 import { AiOutlineMenu } from "react-icons/ai";
+import { SearchIcon } from '@chakra-ui/icons'
+import { useEffect, useState } from 'react'
 
 export default function Navbar({ enableTransition }) {
   const isLargerThan768 = "true";//useMediaQuery(768);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = useRef();
+  const [txID, setTxID] = useState(null);
 
   const NavbarDrawer = () => (
     <>
@@ -89,31 +94,52 @@ export default function Navbar({ enableTransition }) {
         >
           <NextLink href="/">
             <a>
-              <Image src="https://i.imgur.com/ZtPlXnI.png" width="40px" />
+              <Text fontSize="32px" variant="filled" textColor="button4" fontFamily={'Neuzeit Grotesk Bold'} fontWeight="900" marginTop="-12px" marginBottom="-12px">
+                safenode
+              </Text>
             </a>
           </NextLink>
+          <InputGroup size="md"
+            width="50%"
+            marginRight="-150px"
+          >
+            <Input
+              placeholder="Tx Hash"
+              borderColor="background"
+              focusBorderColor="button2"
+              textColor="background"
+              width="100%"
+              _placeholder={{ color: "darkText" }}
+              value={txID}
+              onChange={(e)=> setTxID(e.currentTarget.value)} 
+              onKeyPress={e=> {
+                if (e.key === 'Enter') {
+                    location.assign('tx/' + txID)
+                }
+              }}
+            />
+            <InputRightElement width='4.5rem'>
+              <Button h='1.75rem' size='sm' onClick={e=> {
+                e.preventDefault();
+                location.assign('tx/' + txID)
+              }}>
+              <SearchIcon/>
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+          <button onClick={()=> location.assign('?wd=' + value)}>Search</button>
           {isLargerThan768 ? (
             <Box color="textPrimary">
-              <NextLink href="/" passHref>
+              <NextLink href="/about" passHref>
                 <Button as="a" textColor="background" variant="ghost" p="4" ml="3vw" fontSize="16px" _hover={{ bg: "#ECEFF4", textColor: 'textPrimary' }}>
-                  Home
+                  About
                 </Button>
               </NextLink>
-              <NextLink href="/projects" passHref>
+              <NextLink href="/report" passHref>
                 <Button as="a" textColor="background" variant="ghost" p="4" ml="3vw" fontSize="16px" _hover={{ bg: "#ECEFF4", textColor: 'textPrimary' }}>
-                  Projects
+                  Report Address
                 </Button>
               </NextLink>
-              <NextLink href="/blog" passHref>
-                <Button as="a" textColor="background" variant="ghost" p="4" ml="3vw" fontSize="16px" _hover={{ bg: "#ECEFF4", textColor: 'textPrimary' }}>
-                  Blog
-                </Button>
-              </NextLink>
-              {/* <NextLink href="/account" passHref>
-                <Button as="a" variant="solid" colorScheme="blue" p="4" ml="3vw" fontSize="16px"_hover={{ bg: "#ECEFF4", textColor: 'background' }}>
-                  Account
-                </Button>
-              </NextLink>{" "} */}
             </Box>
           ) : (
               <Icon as={AiOutlineMenu} w={7} h={7} onClick={onOpen} color="background" />

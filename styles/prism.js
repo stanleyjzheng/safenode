@@ -2,6 +2,13 @@ import { css } from '@emotion/react'
 import { theme } from '@chakra-ui/react'
 
 const prismBaseTheme = css`
+  @font-face {
+    font-family: 'Neuzeit Grotesk Bold';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src:url("/NeuzeitGrotesk-Bold.woff2") format("woff2")
+  }
   code {
     white-space: pre;
   }

@@ -26,11 +26,14 @@ const colors = {
   secondary: '#ECEFF4',
   complement: '#5F85DB',
   displayColor: '#2E3440',
-  textPrimary: '#26282B',
+  textPrimary: '#2e3440',
   textSecondary: '#353941',
+  darkText: '4c566a',
   button1: '#2E3440',
   button2: '#81A1C1',
   button3: '#A3BE8C',
+  button4: '#88C0D0',
+  button5: '#8FBCBB',
   borderColor: '#2E3440',
   buttonHover: '#E5E9F0',
 }
@@ -39,6 +42,7 @@ const fonts = {
   ...chakraTheme.fonts,
   body: `Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
   heading: `Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"`,
+  logo: `"Neuzeit Grotesk Bold"`
 }
 
 const breakpoints = createBreakpoints({
