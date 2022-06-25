@@ -6,15 +6,15 @@ def create_database():
     c = conn.cursor()
 
     c.execute("""
-    CREATE TABLE IF NOT EXISTS individual_whitelist (
+    CREATE TABLE IF NOT EXISTS individual_recipient_whitelist (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         sender_address TEXT,
         recipient_address TEXT
-    ) 
+    )
     """)
 
     c.execute("""
-    CREATE TABLE IF NOT EXISTS global_whitelist(
+    CREATE TABLE IF NOT EXISTS global_contract_whitelist(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         address TEXT,
         reason TEXT
@@ -22,7 +22,7 @@ def create_database():
     """)
 
     c.execute("""
-    CREATE TABLE IF NOT EXISTS global_blacklist(
+    CREATE TABLE IF NOT EXISTS global_recipient_blacklist(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         address TEXT,
         reason TEXT
@@ -55,24 +55,12 @@ def create_database():
         gas_price INT,
         gas_limit INT,
         gas_used INT,
-        type INTEGER,
-        safety INTEGER,
-        complaints TEXT,
+        errors TEXT,
+        warnings TEXT,
         simulation TEXT,
         raw_transaction TEXT
     )
     """)
-
-    # withdrawable is 0 (false) or 1 (true)
-    # just parse source code for every new contract to check withdrawble
-    # too lazy to do it properly tbh
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS contracts(
-        address TEXT PRIMARY KEY,
-        withdrawable INTEGER
-    )
-    """)
-
     conn.close()
 
 def random_hex_string(l):
@@ -87,9 +75,9 @@ def generate_bogus_data():
     conn = sqlite.connect('./rpc/safenode.sqlite3') 
     c = conn.cursor()
 
-    c.execute(f"INSERT INTO individual_whitelist (sender_address, recipient_address) VALUES(?, ?)", (random_hex_string(40), random_hex_string(40)))
-    c.execute(f"INSERT INTO global_whitelist (address, reason) VALUES(?, ?)", (random_hex_string(40), 'Official OpenSea contract address'))
-    c.execute(f"INSERT INTO global_blacklist (address, reason) VALUES(?, ?)", (random_hex_string(40), 'this guy straight up sucks, scammed me'))
+    c.execute(f"INSERT INTO individual_recipient_whitelist (sender_address, recipient_address) VALUES(?, ?)", (random_hex_string(40), random_hex_string(40)))
+    c.execute(f"INSERT INTO global_contract_whitelist (address, reason) VALUES(?, ?)", (random_hex_string(40), 'Official OpenSea contract address'))
+    c.execute(f"INSERT INTO global_recipient_blacklist (address, reason) VALUES(?, ?)", (random_hex_string(40), 'this guy straight up sucks, scammed me'))
     c.execute(f"""INSERT INTO warn_list (
         complainer_address, 
         complainer_signature, 
@@ -105,6 +93,8 @@ def generate_bogus_data():
         "this guy sucks turst"
     ))
 
+    # on second thought maybe we should put warnings/errors in transactions table
+    # so that the frontend doesn't need any logic to handle them
     c.execute(f"""INSERT INTO transactions (
         transaction_hash,
         from_address,
@@ -112,27 +102,25 @@ def generate_bogus_data():
         value,
         gas_price,
         gas_limit,
-        gas_used, 
-        type, 
-        safety, 
-        complaints,
+        gas_used,
+        errors,
+        warnings,
         simulation,
         raw_transaction
-    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (
+    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (
         random_hex_string(64),
         random_hex_string(40),
-        random_hex_string(49),
+        random_hex_string(40),
         '2.000',
         18000000000,
         73189,
         43758,
-        1,
-        1,
-        'this address sucks -zachXBT',
+        'big error',
+        'smol warning',
         'somebase64jsonsomethingsomething',
         '0xtotallyrealrawsignedtransaction'
     ))
-    c.execute(f'INSERT INTO contracts (address, withdrawable) VALUES(?, ?)', (random_hex_string(40), 1))
+
     conn.commit()
     conn.close()
 

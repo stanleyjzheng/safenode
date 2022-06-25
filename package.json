@@ -15,6 +15,7 @@
     "@emotion/styled": "^11.9.3",
     "@ethereumjs/tx": "^3.5.2",
     "@rainbow-me/rainbowkit": "^0.3.4",
+    "axios": "^0.27.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "ethereumjs-util": "^7.1.5",

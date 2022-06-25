@@ -149,7 +149,7 @@ export async function getServerSideProps(context) {
   //     }
   //   }
   // })
-  // const result = await db.get("SELECT * from transactions where transaction_hash = (?)", context.params.txID)
-  const result = await db.get("SELECT * from transactions")
+  const result = await db.get("SELECT * from transactions where transaction_hash = (?)", context.params.txID)
+  // const result = await db.get("SELECT * from transactions")
   return { props: { result } }
 }
