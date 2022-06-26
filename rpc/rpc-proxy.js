@@ -30,8 +30,21 @@ async function submitRawSignature(sig) {
     );
 }
 
-async function addNewAddressWhitelist(addr) {
-    
+async function addNewAddressWhitelist(addr, db) {
+    const response = await axios.get('https://api.covalenthq.com/v1/1/address/' + addr + '/transactions_v2/', {
+        params: {
+            'key': 'ckey_37944686355f41e7b522836a17b'
+        }
+    });
+    addrs = new Set()
+    console.log(response)
+    console.log(response.data.items)
+    for (var transaction of response.data.items) {
+        set.add(transaction.too_address)
+    }
+    for (var address of addrs) {
+        db.run("INSERT INTO individual_recipient_whitelist (sender_address, recipient_address) VALUES (?, ?)", [addr, address])
+    }
 }
 
 async function passthroughRPC(req, res) {
@@ -60,6 +73,13 @@ async function getSafety(db, to, from, tenderlySimulations) {
             sendTransaction: true
         }
     }
+
+    // add individual whitelist if they are new user
+    var result = await db.get("SELECT * from individual_recipient_whitelist where sender_address = (?) ", from)
+    // if (result == undefined) {
+    //     addNewAddressWhitelist(from, db)
+    // }
+    // pause this for now because i'm on a new address with no outgoing transactions
 
     // if it is just an eth transfer, no erc721/20
     if (tenderlySimulations.length == 0) { 
@@ -175,8 +195,6 @@ async function processTxs(tx) {
                 submitRawSignature(tx)
             }
             else {
-                console.log('exec pls')
-
                 params = [
                     body['transaction']['hash'],
                     tenderlyBody['from'],
@@ -188,7 +206,8 @@ async function processTxs(tx) {
                     x['error'] ? x['error'] : '',
                     x['warning'] ? x['warning'] : '',
                     JSON.stringify(outputTransactions),
-                    tx
+                    tx,
+                    0
                 ]
 
                 await db.all(`
@@ -203,8 +222,9 @@ async function processTxs(tx) {
                     errors,
                     warnings,
                     simulation,
-                    raw_transaction
-                ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    raw_transaction,
+                    world_id
+                ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `,
                 params 
                 )

@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3123",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "proxy": "local-ssl-proxy --source 3123 --target 3000"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.2",
@@ -15,6 +16,7 @@
     "@emotion/styled": "^11.9.3",
     "@ethereumjs/tx": "^3.5.2",
     "@rainbow-me/rainbowkit": "^0.3.4",
+    "@worldcoin/id": "^0.3.0",
     "axios": "^0.27.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
@@ -22,6 +24,8 @@
     "ethers": "^5.6.9",
     "express": "^4.18.1",
     "framer-motion": "^6.3.15",
+    "jsonwebtoken": "^8.5.1",
+    "jwks-rsa": "^2.1.4",
     "next": "12.1.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",

@@ -48,6 +48,7 @@ export default function Homepage(data) {
               gas_price={Math.round(10*parseInt(data.result.gas_price)*(10**-9))/10 + ' Gwei'}
               gas_limit={data.result.gas_limit}
               gas_used={data.result.gas_used}
+              user_reports={data.result.world_id}
             />
 
             <Heading paddingTop='20px'>Simulation</Heading>
@@ -157,6 +158,12 @@ function TransactionSummary(tx) {
           <Td isNumeric>{tx.gas_used}</Td>
         </Tr>
       </Tbody>
+      <Tbody>
+        <Tr>
+          <Td>User reports</Td>
+          <Td isNumeric>{tx.user_reports}</Td>
+        </Tr>
+      </Tbody>
     </Table>
   </TableContainer>
 }
@@ -181,7 +188,7 @@ function TransferCard({txs}) {
             src='https://lh3.googleusercontent.com/jDFIJBe7q7oE208GMI0gRWX8sNhw2apWX9vdsG_fBwVxy1A9nuA09azjOpFL1LRUFlN53tmkObnyjNyhcF1yTd02JOJh7hIpfrS_=w80'
             width={ 16 }
           />
-          <Text color='textPrimary'><b>{index}. </b>{tx.function_name} {tx.token_name} (${tx.token_symbol}) #{1057200+index} to {tx.to}</Text>
+          <Text color='textPrimary'><b>{index+1}. </b>{tx.function_name} {tx.token_name} (${tx.token_symbol}) #{1057200+index} to {tx.to}</Text>
         </HStack>
       })}
     </VStack>
@@ -195,8 +202,14 @@ export async function getServerSideProps(context) {
     driver: sqlite3.Database
   })
 
+
+
   const result = await db.get("SELECT * from transactions where transaction_hash = (?)", context.params.txID)
   result.simulation = JSON.parse(result.simulation)
+
+
+  var userReports = await db.get("SELECT * from world_id where address = (?)", result.to_address)
+  result.world_id = userReports ? userReports.count : 0
   var expanded_simulation = []
   for (const eventnum in result.simulation) {
     var event = result.simulation[eventnum]

@@ -135,7 +135,7 @@ export default function Navbar({ enableTransition }) {
                   About
                 </Button>
               </NextLink>
-              <NextLink href="/report" passHref>
+              <NextLink href="/worldcoin" passHref>
                 <Button as="a" textColor="background" variant="ghost" p="4" ml="3vw" fontSize="16px" _hover={{ bg: "#ECEFF4", textColor: 'textPrimary' }}>
                   Report Address
                 </Button>

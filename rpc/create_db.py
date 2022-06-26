@@ -30,6 +30,13 @@ def create_database():
     """)
 
     c.execute("""
+    CREATE TABLE IF NOT EXISTS world_id(
+        address TEXT PRIMARY KEY,
+        count INTEGER
+    )
+    """)
+
+    c.execute("""
     CREATE TABLE IF NOT EXISTS warn_list(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         complainer_address TEXT,
@@ -58,7 +65,8 @@ def create_database():
         errors TEXT,
         warnings TEXT,
         simulation TEXT,
-        raw_transaction TEXT
+        raw_transaction TEXT,
+        world_id INT
     )
     """)
     conn.close()
@@ -106,8 +114,9 @@ def generate_bogus_data():
         errors,
         warnings,
         simulation,
-        raw_transaction
-    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (
+        raw_transaction,
+        world_id
+    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (
         random_hex_string(64),
         random_hex_string(40),
         random_hex_string(40),
@@ -118,7 +127,8 @@ def generate_bogus_data():
         'big error',
         'smol warning',
         'somebase64jsonsomethingsomething',
-        '0xtotallyrealrawsignedtransaction'
+        '0xtotallyrealrawsignedtransaction',
+        2
     ))
 
     conn.commit()
