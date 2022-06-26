@@ -1,24 +1,26 @@
 import {
-    Box,
-    Heading,
-    Text,
-    Button,
-    Stack,
-    createIcon,
-    SlideFade,
-    Flex,
-    Center,
-    Container,
-    Divider,
-    TableContainer,
-    Tbody,
-    Table,
-    Tr,
-    Td,
+  Box,
+  Heading,
+  Text,
+  Button,
+  Stack,
+  Container,
+  TableContainer,
+  Tbody,
+  Table,
+  Tr,
+  Td,
+  HStack,
+  VStack,
+  Image,
+  StackDivider,
+  Alert,
+  AlertIcon,
+  Center
 } from '@chakra-ui/react';
 
 import NavbarContainer from '../../components/NavbarContainer'
-
+const axios = require('axios');
 // import mysql from 'mysql'
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
@@ -48,13 +50,18 @@ export default function Homepage(data) {
               gas_used={data.result.gas_used}
             />
 
-            <Heading py={{ md: 10 }}>Simulation</Heading>
+            <Heading paddingTop='20px'>Simulation</Heading>
             <Stack spacing={2}>
-              <Text display='inline'><b>1.</b> Transfer ERC-721 Doodles ($DODL) TokenId #1234 to 0xa7rs90t7ar89s7t980r7t987rs9t8</Text>
-
-              <Divider borderColor='textSecondary'/>
+              <TransferCard txs={JSON.parse(data.result.simulation)}></TransferCard>
+              <WarningsErrors data={data.result}></WarningsErrors>
             </Stack>
+            <br></br>
+            <Center mt="12px"               _hover={{
+                textColor: 'textPrimary',
+              }}><Button bg='textPrimary' onClick={submitRawSignature(data.result.raw_transaction)}>Submit Transaction</Button></Center>
+
           </Stack>
+          
         </Container>
 
 
@@ -63,10 +70,51 @@ export default function Homepage(data) {
   );
 }
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
+async function submitRawSignature(sig) {
+  const response = await axios.post(
+      'http://localhost:8000',
+      JSON.stringify({
+          'jsonrpc': '2.0',
+          'method': 'eth_sendRawTransaction',
+          'params': [sig],
+          'id': getRandomInt(10000000)
+      }),
+      {
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      }
+  );
+}
+function WarningsErrors({data}) {
+  return <>
+    
+    {data.errors !== ''
+      ? <>
+        <Heading>Errors</Heading>
+        <Alert status='error' textColor='textSecondary'> <AlertIcon /> {data.errors}</Alert>
+      </>
+      : <>{
+        data.warnings !== ''
+          ? <>
+            <Heading>Warnings</Heading>
+
+            <Alert status='warning' textColor='textSecondary'> <AlertIcon />{data.warnings}</Alert>
+          </>
+          : <> </>
+      }</>
+    }
+  </>
+}
+
 function TransactionSummary(tx) {
   return < TableContainer >
 
-    <Table variant='simple' size='sm' colorScheme="red" borderColor={"button1"}>
+    <Table variant='simple' size='sm' colorScheme="facebook" borderColor={"button3"} textColor='textPrimary'>
       <Tbody>
         <Tr>
           <Td>Tx hash</Td>
@@ -113,12 +161,31 @@ function TransactionSummary(tx) {
   </TableContainer>
 }
 
-function TransferCard() {
-  const simulation = [
-    {
-      
-    }
-  ]
+function getRandomArbitrary(min, max) {
+  // obviously wouldn't want to do this but
+  // opensea's testnet stability is REALLY BAD and I can't get paradigm's multifaucet
+  // metadata to load on OpenSea, meaning no tokenurl and image.
+  // sadface
+  return Math.random() * (max - min) + min;
+}
+
+function TransferCard({txs}) {
+  console.log(txs)
+  return (
+    <VStack divider={<StackDivider  
+    borderColor='textSecondary'/>}>
+      {txs.map((tx, index) => {
+        return <HStack key={index} w='full' spacing={4}>
+          <Image
+            // src={tx.image}
+            src='https://lh3.googleusercontent.com/jDFIJBe7q7oE208GMI0gRWX8sNhw2apWX9vdsG_fBwVxy1A9nuA09azjOpFL1LRUFlN53tmkObnyjNyhcF1yTd02JOJh7hIpfrS_=w80'
+            width={ 16 }
+          />
+          <Text color='textPrimary'><b>{index}. </b>{tx.function_name} {tx.token_name} (${tx.token_symbol}) #{1057200+index} to {tx.to}</Text>
+        </HStack>
+      })}
+    </VStack>
+  )
 }
 
 export async function getServerSideProps(context) {
@@ -127,29 +194,33 @@ export async function getServerSideProps(context) {
     filename: './rpc/safenode.sqlite3',
     driver: sqlite3.Database
   })
-  // var db = mysql.createConnection({
-  //   host     : 'database-1.cioplj7ppcrv.us-east-1.rds.amazonaws.com',
-  //   user     : 'admin',
-  //   password : 'ApNLgWJzbbB4Rxw',
-  //   database : 'database-1'
-  // });
 
-  // db.connect()
-  // var tx = context.params
-  // db.get("SELECT * from transactions where transaction_hash = (?)", context.params.txID, function (err, data) {
-  //   if (err) {
-  //     console.log(err)
-  //     return { props: { data: err } }
-  //   } else {
-  //     console.log(data)
-  //     return {
-  //       props: {
-  //         data
-  //       }
-  //     }
-  //   }
-  // })
   const result = await db.get("SELECT * from transactions where transaction_hash = (?)", context.params.txID)
-  // const result = await db.get("SELECT * from transactions")
+  result.simulation = JSON.parse(result.simulation)
+  var expanded_simulation = []
+  for (const eventnum in result.simulation) {
+    var event = result.simulation[eventnum]
+    if (event.function_name == 'ApprovalForAll') {
+      const response = await axios.get('https://testnets-api.opensea.io/api/v1/assets', {
+        params: {
+            'owner': event.from,
+            'asset_contract_addresses': event.contract_address,
+            'order_direction': 'desc',
+            'offset': '0',
+            'limit': '20',
+            'include_orders': 'false'
+        }
+      });
+
+
+      for (const i in response.data.assets) {
+        var imageAdded = event
+        event['image'] = i['image_url']
+        event['tokenId'] = i['token_id']
+        expanded_simulation.push(imageAdded)
+      }
+    }
+  }
+  result.simulation = JSON.stringify(expanded_simulation)
   return { props: { result } }
 }

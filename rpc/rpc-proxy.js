@@ -30,6 +30,10 @@ async function submitRawSignature(sig) {
     );
 }
 
+async function addNewAddressWhitelist(addr) {
+    
+}
+
 async function passthroughRPC(req, res) {
     request({
         url: process.env.RPC_URL,
@@ -113,8 +117,7 @@ async function getSafety(db, to, from, tenderlySimulations) {
 
 async function processTxs(tx) {
     const db = await open({
-        // filename: './rpc/safenode.sqlite3',
-        filename: '/Users/terbi/Desktop/safenode_private/rpc/safenode.sqlite3',
+        filename: './rpc/safenode.sqlite3',
         driver: sqlite3.Database
     })
 
@@ -227,6 +230,9 @@ app.post('/', async function (req, res) {
     if (req.body['method'] == 'eth_sendRawTransaction') {
         console.log(req.body)
         processTxs(req.body['params'][0])
+    }
+    else if (req.body['method'] == 'eth_bypassSendRawTransaction') {
+        submitRawSignature(req.body['params'][0])
     }
     else {
         passthroughRPC(req, res)

@@ -52,7 +52,7 @@ export default function Homepage() {
               letterSpacing="-1.6px"
             >
               <Box color="textSecondary" as="span">
-              Ethereum RPC proxy
+              Smart ETH-RPC compatible proxy
               </Box>
             </Heading>
           </SlideFade>
