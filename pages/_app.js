@@ -1,7 +1,7 @@
-import { ChakraProvider } from '@chakra-ui/react'
-import customTheme from '../styles/theme'
-import { Global, css } from '@emotion/react'
-import { prismDarkTheme } from '../styles/prism'
+import { ChakraProvider } from "@chakra-ui/react";
+import customTheme from "../styles/theme";
+import { Global, css } from "@emotion/react";
+import { prismDarkTheme } from "../styles/prism";
 const GlobalStyle = ({ children }) => {
   return (
     <>
@@ -15,7 +15,7 @@ const GlobalStyle = ({ children }) => {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background: #D8DEE9;
+            background: #d8dee9;
           }
           ::-webkit-scrollbar {
             width: 8px;
@@ -23,15 +23,15 @@ const GlobalStyle = ({ children }) => {
           }
 
           ::-webkit-scrollbar-thumb {
-            background: #26282B;
+            background: #26282b;
             border-radius: 8px;
           }
         `}
       />
       {children}
     </>
-  )
-}
+  );
+};
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -40,6 +40,6 @@ function MyApp({ Component, pageProps }) {
         <Component {...pageProps} />
       </GlobalStyle>
     </ChakraProvider>
-  )
+  );
 }
-export default MyApp
+export default MyApp;

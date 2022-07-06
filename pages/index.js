@@ -1,27 +1,25 @@
 import {
   Box,
   Heading,
-  Text,
   Button,
   Stack,
-  createIcon,
-  SlideFade
-} from '@chakra-ui/react';
-import NavbarContainer from '../components/NavbarContainer'
+  SlideFade,
+} from "@chakra-ui/react";
+import NavbarContainer from "../components/NavbarContainer";
 
 export default function Homepage() {
   return (
     <>
-      <NavbarContainer maxW={'3xl'} position='relative'>
+      <NavbarContainer maxW={"3xl"} position="relative">
         <Stack
           as={Box}
-          textAlign={'center'}
+          textAlign={"center"}
           spacing={{ base: 8, md: 14 }}
           py={{ base: 20, md: 36 }}
-          position='absolute'
-          top='50%'
-          left='50%'
-          transform='translate(-50%, -50%)'
+          position="absolute"
+          top="50%"
+          left="50%"
+          transform="translate(-50%, -50%)"
         >
           <SlideFade
             direction="top"
@@ -30,9 +28,9 @@ export default function Homepage() {
           >
             <Heading
               fontSize="display"
-              lineHeight={'95%'}
+              lineHeight={"95%"}
               color="textPrimary"
-              letterSpacing={{ sm: '-1.2px', md: '-1.8px' }}
+              letterSpacing={{ sm: "-1.2px", md: "-1.8px" }}
               position="relative"
               zIndex={1}
             >
@@ -52,22 +50,23 @@ export default function Homepage() {
               letterSpacing="-1.6px"
             >
               <Box color="textSecondary" as="span">
-              Smart ETH-RPC compatible proxy
+                Smart ETH-RPC compatible proxy
               </Box>
             </Heading>
           </SlideFade>
           <Stack
-            direction={'column'}
+            direction={"column"}
             spacing={3}
-            align={'center'}
-            alignSelf={'center'}
-            position={'relative'}>
+            align={"center"}
+            alignSelf={"center"}
+            position={"relative"}
+          >
             <Button
-              bg={'button4'}
-              rounded={'full'}
+              bg={"button4"}
+              rounded={"full"}
               px={6}
               _hover={{
-                bg: 'button2',
+                bg: "button2",
               }}
               textColor="textPrimary"
             >

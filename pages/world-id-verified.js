@@ -1,34 +1,29 @@
 import {
   Box,
   Heading,
-  Text,
-  Button,
   Stack,
-  createIcon,
   SlideFade,
-  HStack,
-  InputGroup,
-} from '@chakra-ui/react';
-import NavbarContainer from '../components/NavbarContainer'
+} from "@chakra-ui/react";
+import NavbarContainer from "../components/NavbarContainer";
 
-import jwt from 'jsonwebtoken'
-import jwksClient from 'jwks-rsa'
-import { open } from 'sqlite'
-import sqlite3 from 'sqlite3'
+import jwt from "jsonwebtoken";
+import jwksClient from "jwks-rsa";
+import { open } from "sqlite";
+import sqlite3 from "sqlite3";
 
 export default function Homepage() {
   return (
     <>
-      <NavbarContainer maxW={'3xl'}>
-      <Stack
+      <NavbarContainer maxW={"3xl"}>
+        <Stack
           as={Box}
-          textAlign={'center'}
+          textAlign={"center"}
           spacing={{ base: 8, md: 14 }}
           py={{ base: 20, md: 36 }}
-          position='absolute'
-          top='50%'
-          left='50%'
-          transform='translate(-50%, -50%)'
+          position="absolute"
+          top="50%"
+          left="50%"
+          transform="translate(-50%, -50%)"
         >
           <SlideFade
             direction="top"
@@ -48,48 +43,56 @@ export default function Homepage() {
             </Heading>
           </SlideFade>
         </Stack>
-
       </NavbarContainer>
     </>
   );
 }
 
 async function increment(db, addr) {
-  var current = await db.get("SELECT * from world_id where address = (?)", addr)
+  var current = await db.get(
+    "SELECT * from world_id where address = (?)",
+    addr
+  );
   if (current != undefined) {
-    await db.run("UPDATE world_id SET count = (?) WHERE address = (?)", current.count + 1, addr)
-  }
-  else {
-    await db.all("INSERT INTO world_id (address, count) VALUES (?, ?)", addr, 1)
+    await db.run(
+      "UPDATE world_id SET count = (?) WHERE address = (?)",
+      current.count + 1,
+      addr
+    );
+  } else {
+    await db.all(
+      "INSERT INTO world_id (address, count) VALUES (?, ?)",
+      addr,
+      1
+    );
   }
 }
 
-export async function getServerSideProps({query}) {
+export async function getServerSideProps({ query }) {
   const db = await open({
-    filename: './rpc/safenode.sqlite3',
-    driver: sqlite3.Database
-  })
-
+    filename: "./rpc/safenode.sqlite3",
+    driver: sqlite3.Database,
+  });
 
   const client = jwksClient({
-    jwksUri: 'https://developer.worldcoin.org/api/v1/jwks'
-  })
+    jwksUri: "https://developer.worldcoin.org/api/v1/jwks",
+  });
 
   const getKey = (header, callback) => {
     client.getSigningKey(header.kid, function (err, key) {
-      const signingKey = key.publicKey || key.rsaPublicKey
-      callback(null, signingKey)
-    })
-  }
+      const signingKey = key.publicKey || key.rsaPublicKey;
+      callback(null, signingKey);
+    });
+  };
 
-  var token = query.verification_jwt
+  var token = query.verification_jwt;
 
-  jwt.verify(token, getKey, '', function (err, decoded) {
+  jwt.verify(token, getKey, "", function (err, decoded) {
     if (decoded.verified) {
-      increment(db, decoded.signal)
+      increment(db, decoded.signal);
     }
-  })
+  });
   return {
-    props: {params: query}
+    props: { params: query },
   };
 }

@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
-import { Flex, Stack, Box } from '@chakra-ui/react'
-import Navbar from './Navbar'
+import React, { useEffect } from "react";
+import { Flex, Stack, Box } from "@chakra-ui/react";
+import Navbar from "./Navbar";
 
 const NavbarContainer = ({ enableTransition, children }) => {
   return (
@@ -10,7 +10,7 @@ const NavbarContainer = ({ enableTransition, children }) => {
         {children}
       </Flex>
     </>
-  )
-}
+  );
+};
 
-export default NavbarContainer
+export default NavbarContainer;
